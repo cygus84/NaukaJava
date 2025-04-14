@@ -37,43 +37,6 @@ public class WarehouseApp {
 	        JButton moveProductButton = new JButton("Przenieś");
 	        panel.add(moveProductButton);
 	        
-	        moveProductButton.addActionListener(e -> {
-	        	 // Sprawdzamy, czy wybrano produkt w tabeli
-	            int row = productTable.getSelectedRow();  // Załóżmy, że masz tabelę produktów (JTable)
-	            if (row == -1) {  // Jeśli nic nie jest zaznaczone
-	                JOptionPane.showMessageDialog(this, "Proszę wybrać produkt.", "Błąd", JOptionPane.ERROR_MESSAGE);
-	                return;
-	            }
-
-	            // Pobieramy ID wybranego produktu (przyjmujemy, że jest w pierwszej kolumnie)
-	            int productId = (int) productTable.getValueAt(row, 0);  // Zakładając, że ID produktu jest w pierwszej kolumnie
-	            Product product = productDAO.getById(productId);  // Pobieramy produkt z bazy danych
-
-	            // Pobieramy nową lokalizację z pola tekstowego (np. JTextField)
-	            int newLocationId;
-	            try {
-	                newLocationId = Integer.parseInt(newLocationField.getText());  // newLocationField to JTextField, gdzie użytkownik wpisuje ID lokalizacji
-	            } catch (NumberFormatException ex) {
-	                JOptionPane.showMessageDialog(this, "Niepoprawny format ID lokalizacji.", "Błąd", JOptionPane.ERROR_MESSAGE);
-	                return;
-	            }
-
-	            // Jeśli nowa lokalizacja jest taka sama jak stara, nie robimy nic
-	            if (product.getCurrentLocationId() == newLocationId) {
-	                JOptionPane.showMessageDialog(this, "Produkt już znajduje się w tej lokalizacji.", "Błąd", JOptionPane.ERROR_MESSAGE);
-	                return;
-	            }
-
-	            // Tworzymy obiekt ProductService, aby przenieść produkt
-	            ProductService productService = new ProductService();
-	            productService.moveProduct(product, newLocationId);  // Przenosimy produkt do nowej lokalizacji
-
-	            // Odświeżamy dane w tabeli
-	            refreshProductTable();  // Metoda, która odświeża zawartość tabeli (np. pobierając dane z bazy)
-
-	            // Informujemy użytkownika o powodzeniu
-	            JOptionPane.showMessageDialog(this, "Produkt został przeniesiony!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
-	        });
 	        
 	        JButton editProductButton = new JButton("Edytuj");
 	        JButton deleteProductButton = new JButton("Usuń");

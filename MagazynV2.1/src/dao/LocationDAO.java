@@ -10,28 +10,8 @@ import model.Location;
 import util.DatabaseManager;
 
 public class LocationDAO {
-	
-	String newLocationText;
-	public void save(Location location) {
-		String sql = "INSERT INTO locations (name) VALUES (?)";
 
-		try (Connection conn = DatabaseManager.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-			pstmt.setString(1, location.getName());
-			pstmt.executeUpdate();
-
-			try (ResultSet keys = pstmt.getGeneratedKeys()) {
-				if (keys.next()) {
-					location.setId(keys.getInt(1));
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
+	// Zwraca wszystkie lokalizacje z bazy danych
 	public List<Location> getAll() {
 		List<Location> locations = new ArrayList<>();
 		String sql = "SELECT * FROM locations";
@@ -41,27 +21,73 @@ public class LocationDAO {
 				ResultSet rs = stmt.executeQuery(sql)) {
 
 			while (rs.next()) {
-				locations.add(new Location(rs.getInt("id"), rs.getString("name")));
+				Location location = new Location(rs.getInt("id"), rs.getString("name"));
+				locations.add(location);
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		return locations;
 	}
-	
-	// Zakładamy, że newLocationField to JTextField, w którym użytkownik wpisuje ID lokalizacji
- newLocationText = newLocationField.getText();
 
-	// Sprawdzamy, czy użytkownik wpisał liczbę
-	int newLocationId;
-	try {
-	    newLocationId = Integer.parseInt(newLocationText1);  // Przekształcamy tekst na liczbę całkowitą
-	} catch (NumberFormatException ex) {
-	    JOptionPane.showMessageDialog(this, "Niepoprawny format ID lokalizacji. Proszę podać liczbę całkowitą.", "Błąd", JOptionPane.ERROR_MESSAGE);
-	    return;
+	// Zwraca lokalizację po ID
+	public Location getById(int id) {
+		String sql = "SELECT * FROM locations WHERE id = ?";
+		Location location = null;
+
+		try (Connection conn = DatabaseManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, id);
+			ResultSet rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				location = new Location(rs.getInt("id"), rs.getString("name"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return location;
 	}
 
-	// Teraz możesz używać newLocationId (ID nowej lokalizacji)
+	// Dodaje nową lokalizację
+	public void save(Location location) {
+		String sql = "INSERT INTO locations (name) VALUES (?)";
+
+		try (Connection conn = DatabaseManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setString(1, location.getName());
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Aktualizuje lokalizację
+	public void update(Location location) {
+		String sql = "UPDATE locations SET name = ? WHERE id = ?";
+
+		try (Connection conn = DatabaseManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setString(1, location.getName());
+			pstmt.setInt(2, location.getId());
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Usuwa lokalizację
+	public void delete(int id) {
+		String sql = "DELETE FROM locations WHERE id = ?";
+
+		try (Connection conn = DatabaseManager.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, id);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

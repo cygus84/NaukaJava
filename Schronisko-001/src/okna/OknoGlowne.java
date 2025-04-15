@@ -24,7 +24,7 @@ public class OknoGlowne extends JFrame {
 	 * Create the frame.
 	 */
 	public OknoGlowne() {
-		setTitle("Schronisko Koty");
+		setTitle("Schronisko Koty ver-001");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 920, 698);
 		contentPane = new JPanel();
